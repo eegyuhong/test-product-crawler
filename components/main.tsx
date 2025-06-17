@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react';
+import { CheckCircle2Icon, Loader2 } from 'lucide-react';
 import ProductList from './productList';
 import {
   Pagination,
@@ -26,6 +26,11 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from '@/components/ui/pagination';
+
+const PLATFORM_OPTIONS = [
+  { value: 'oliveyoung', label: '올리브영', description: '올리브영에서 크롤링할 브랜드 페이지 URL을 입력하세요' },
+  { value: '29cm', label: '29cm', description: '29cm에서 크롤링할 브랜드 페이지 URL을 입력하세요' },
+];
 
 export default function Main() {
   const [selectedOption, setSelectedOption] = useState('oliveyoung');
@@ -132,7 +137,11 @@ export default function Main() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="oliveyoung">올리브영</SelectItem>
+                {PLATFORM_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -144,7 +153,7 @@ export default function Main() {
             id="input-field"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="올리브영 상품 URL을 입력하세요"
+            placeholder="URL을 입력하세요"
           />
         </div>
 
@@ -157,6 +166,15 @@ export default function Main() {
       </div>
 
       {/* 오류 메시지 */}
+      {selectedOption && (
+        <Alert>
+          <CheckCircle2Icon />
+          <AlertTitle>이용 방법 및 주의사항</AlertTitle>
+          <AlertDescription>
+            {PLATFORM_OPTIONS.find((option) => option.value === selectedOption)?.description}
+          </AlertDescription>
+        </Alert>
+      )}
       {error && (
         <Alert variant="destructive">
           <AlertTitle>오류 발생</AlertTitle>
