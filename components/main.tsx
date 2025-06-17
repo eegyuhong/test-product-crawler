@@ -17,6 +17,15 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import ProductList from './productList';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from '@/components/ui/pagination';
 
 export default function Main() {
   const [selectedOption, setSelectedOption] = useState('oliveyoung');
@@ -24,6 +33,14 @@ export default function Main() {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
+
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -64,6 +81,43 @@ export default function Main() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  // 페이지네이션 범위 계산 함수
+  const getPaginationRange = () => {
+    const totalNumbers = 5; // (현재 페이지 기준 앞뒤 2개 + 현재 + 첫/끝)
+    const totalBlocks = totalNumbers + 2; // Ellipsis 2개까지 포함
+
+    if (totalPages <= totalBlocks) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | 'ellipsis')[] = [];
+    const leftSibling = Math.max(currentPage - 1, 2);
+    const rightSibling = Math.min(currentPage + 1, totalPages - 1);
+
+    pages.push(1);
+
+    if (leftSibling > 2) {
+      pages.push('ellipsis');
+    }
+
+    for (let i = leftSibling; i <= rightSibling; i++) {
+      pages.push(i);
+    }
+
+    if (rightSibling < totalPages - 1) {
+      pages.push('ellipsis');
+    }
+
+    pages.push(totalPages);
+
+    return pages;
   };
 
   return (
@@ -112,7 +166,45 @@ export default function Main() {
 
       {/* 결과 목록 */}
       {!loading && products.length > 0 && (
-        <ProductList products={products} />
+        <>
+          <ProductList products={paginatedProducts} />
+          <div className="mt-6 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    aria-disabled={currentPage === 1}
+                    tabIndex={currentPage === 1 ? -1 : 0}
+                  />
+                </PaginationItem>
+                {getPaginationRange().map((page, idx) =>
+                  page === 'ellipsis' ? (
+                    <PaginationItem key={`ellipsis-${idx}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        isActive={currentPage === page}
+                        onClick={() => handlePageChange(Number(page))}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ),
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    aria-disabled={currentPage === totalPages}
+                    tabIndex={currentPage === totalPages ? -1 : 0}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </>
       )}
     </main>
   );
