@@ -30,6 +30,7 @@ import {
 const PLATFORM_OPTIONS = [
   { value: 'oliveyoung', label: '올리브영', description: '올리브영에서 크롤링할 브랜드 페이지 URL을 입력하세요' },
   { value: '29cm', label: '29cm', description: '29cm에서 크롤링할 브랜드 페이지 URL을 입력하세요' },
+  { value: 'abcmart', label: 'abc마트', description: 'abc마트에서 크롤링할 브랜드 페이지 URL을 입력하세요' },
 ];
 
 export default function Main() {
@@ -172,6 +173,8 @@ export default function Main() {
           <AlertTitle>이용 방법 및 주의사항</AlertTitle>
           <AlertDescription>
             {PLATFORM_OPTIONS.find((option) => option.value === selectedOption)?.description}
+            <br />
+            최대 3개 페이지까지 크롤링됩니다.
           </AlertDescription>
         </Alert>
       )}

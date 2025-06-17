@@ -12,7 +12,6 @@ export async function crawl29cm(page: Page, url: string): Promise<Product[]> {
     urlObj.searchParams.set('page', currentPage.toString());
 
     const pageUrl = urlObj.toString();
-    console.log(`페이지 ${currentPage} 크롤링 중: ${pageUrl}`);
       
     // 페이지 로드
     await page.goto(pageUrl, { 
@@ -51,6 +50,11 @@ export async function crawl29cm(page: Page, url: string): Promise<Product[]> {
 
     // 다음 페이지로 이동
     currentPage++;
+
+    if (currentPage > 3) {
+      hasMorePages = false;
+      break;
+    }
   }
 
   return result;

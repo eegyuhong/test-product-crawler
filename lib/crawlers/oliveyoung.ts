@@ -7,6 +7,7 @@ export async function crawlOliveYoung(page: Page, url: string): Promise<Product[
   const result = await page.evaluate(async () => {
     const allProducts = [];
     let hasMorePages = true;
+    let currentPage = 1;
 
     while (hasMorePages) {
       const containers = document.querySelectorAll('div#allGoodsList div.prod');
@@ -39,6 +40,12 @@ export async function crawlOliveYoung(page: Page, url: string): Promise<Product[
       if (currentPageEl && currentPageEl.nextElementSibling) {
         (currentPageEl.nextElementSibling as HTMLElement).click();
         await new Promise((resolve) => setTimeout(resolve, 500));
+        currentPage++;
+
+        if (currentPage > 3) {
+          hasMorePages = false;
+          break;
+        }
       } else {
         hasMorePages = false;
       }
