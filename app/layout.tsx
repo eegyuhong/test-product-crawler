@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { gmarketSans, spoqaHanSansNeo } from '@/fonts';
 import './globals.css';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: '쇼핑몰 상품 크롤링',
@@ -17,6 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://insight-board-omega.vercel.app/track.js"
+          data-project-id="Crawler"
+          strategy="afterInteractive"
+        />
+      </head>
       <body
         className={`${spoqaHanSansNeo.className} ${gmarketSans.variable} antialiased`}
       >
